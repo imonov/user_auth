@@ -95,6 +95,21 @@ app.put("/users/:id", (req, res) => {
     res.status(200).json({ message: "user updated" });
 });
 
+app.delete("/users/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const data = readData();
+    const user = data.findIndex((e) => e.id === id);
+
+    if (user === -1) {
+        res.status(404).json({ message: "user not found" });
+        return;
+    }
+
+    data.splice(user, 1);
+    writeData(data);
+    res.status(200).json({ message: "user deleted" });
+});
+
 app.listen(PORT, () => {
     console.log("Server running 3000");
 });
