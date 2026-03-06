@@ -1,0 +1,74 @@
+<div class="container">
+  <h3 class="text-center p-5">Users</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Username</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each data}}
+        <tr>
+          <th scope="row"><i>{{this.id}}</i></th>
+          <td>{{this.name}}</td>
+          <td>{{this.phone}}</td>
+          <td>@{{this.username}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <p>{{totalCount}} ta ma'lumot topildi</p>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center mt-4">
+
+      {{!-- Oldingi tugma --}}
+      {{#if hasPrev}}
+        <li class="page-item">
+          <a class="page-link" href="?page={{prevPage currentPage}}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {{else}}
+        <li class="page-item disabled">
+          <a class="page-link" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {{/if}}
+
+      {{!-- Sahifa raqamlari --}}
+      {{#each (range 1 totalPages)}}
+        {{#if (isActive this ../currentPage)}}
+          <li class="page-item active">
+            <a class="page-link" href="?page={{this}}">{{this}}</a>
+          </li>
+        {{else}}
+          <li class="page-item">
+            <a class="page-link" href="?page={{this}}">{{this}}</a>
+          </li>
+        {{/if}}
+      {{/each}}
+
+      {{!-- Keyingi tugma --}}
+      {{#if hasNext}}
+        <li class="page-item">
+          <a class="page-link" href="?page={{nextPage currentPage}}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {{else}}
+        <li class="page-item disabled">
+          <a class="page-link" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {{/if}}
+
+    </ul>
+  </nav>
+</div>

@@ -1,16 +1,42 @@
-import express from "express";
+import express, { urlencoded } from "express";
 import cors from "cors";
 
 import { fileURLToPath } from "node:url";
 
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { engine } from "express-handlebars";
 
 const app = express();
 const PORT = 3000;
 
+app.engine(
+    "hbs",
+    engine({
+        extname: ".hbs",
+        defaultLayout: "main",
+        layoutsDir: "views/layouts/",
+        helpers: {
+            range: (from, to) => {
+                const arr = [];
+                for (let i = from; i <= to; i++) arr.push(i);
+                return arr;
+            },
+            isActive: (current, page) => current === page,
+            prevPage: (page) => page - 1,
+            nextPage: (page) => page + 1,
+        },
+    }),
+);
+app.set("view engine", "hbs");
+app.set("views", "./views");
+
+app.use(express.static("public"));
+
 app.use(express.json());
 app.use(cors());
+
+app.use(urlencoded({ extended: true }));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,7 +61,25 @@ function readData() {
 // routes
 
 app.get("/", (req, res) => {
-    res.send("Salom..");
+    const data = readData();
+
+    const { limit = 10, page = 1 } = req.query;
+    const currentPage = Number(page);
+    const totalCount = data.length;
+    const totalPages = Math.ceil(data.length / Number(limit));
+
+    res.render("home", {
+        totalCount,
+        totalPages,
+        currentPage, // page o'rniga currentPage
+        limit: Number(limit),
+        hasPrev: currentPage > 1, // qo'shildi
+        hasNext: currentPage < totalPages, // qo'shildi
+        data: data.slice(
+            (currentPage - 1) * Number(limit),
+            currentPage * Number(limit),
+        ),
+    });
 });
 
 app.get("/users", (req, res) => {
@@ -56,6 +100,12 @@ app.post("/users", (req, res) => {
     const userPhone = data.find((e) => e.phone == phone);
     if (userPhone) {
         res.status(409).json({ message: "phone number already exists" });
+        return;
+    }
+
+    const userName = data.find((e) => e.username == username);
+    if (userName) {
+        res.status(409).json({ message: "username already exists" });
         return;
     }
 
