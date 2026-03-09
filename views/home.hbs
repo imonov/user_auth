@@ -2,7 +2,7 @@
   <h3 class="text-center p-5">Users</h3>
   <table class="table">
     <thead>
-      <tr>
+      <tr class="bg-dark text-light">
         <th scope="col">ID</th>
         <th scope="col">Name</th>
         <th scope="col">Phone</th>
@@ -15,7 +15,7 @@
           <th scope="row"><i>{{this.id}}</i></th>
           <td>{{this.name}}</td>
           <td>{{this.phone}}</td>
-          <td>@{{this.username}}</td>
+          <td class="text-success">@{{this.username}}</td>
         </tr>
       {{/each}}
     </tbody>
